@@ -22,8 +22,6 @@
 #define SERIAL_SPEED_DC_MOTOR 24
 
 //Servo motor headers(30-39)
-#define SERIAL_ATTACH_SERVO 30
-#define SERIAL_DETACH_SERVO 31
 #define SERIAL_SET_SERVO 32
 
 int header[2];

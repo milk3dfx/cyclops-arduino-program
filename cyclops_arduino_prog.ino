@@ -44,6 +44,8 @@ void sendHeader(byte type, byte length){
 void setup(){
   delay(500);
   Serial.begin(9600);
+  mServo[0].attach(5);
+  mServo[1].attach(7);
 }
 void loop(){
   while(true){
@@ -85,14 +87,8 @@ void loop(){
             analogWrite(mSpeedPin[body[0]], body[1]);
         break;
         //Servo motor
-        case SERIAL_ATTACH_SERVO:
-           mServo[body[0]].attach(body[1]);
-        break;
-        case SERIAL_DETACH_SERVO:
-           mServo[body[0]].detach();
-        break;
         case SERIAL_SET_SERVO:
-           mServo[body[0]].write(body[1]);
+           mServo[body[0]-1].write(body[1]);
         break;
       }
     }

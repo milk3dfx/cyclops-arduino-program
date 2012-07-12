@@ -1,17 +1,18 @@
-#include <SoftwareServo.h>
+#include <Servo.h>
 
+// Servo motors
+#define NUM_OF_SERVOS 2
+#define HORIZONTAL 1
+#define VERTICAL 2
 #define MIN_POS 1500
 #define MAX_POS 1900
 
+// DC motors
 #define LEFT 1
 #define RIGHT 2
 
-// Servo motors
-#define HORIZONTAL 1
-#define VERTICAL 2
-
+// Serial
 #define SERIAL_BUFFER_SIZE 128
-
 //Main headers(0-19)
 #define SERIAL_NO 0
 #define SERIAL_YES 1
@@ -22,6 +23,8 @@
 #define SERIAL_SPEED_DC_MOTOR 24
 
 //Servo motor headers(30-39)
+#define SERIAL_ATTACH_SERVO 30
+#define SERIAL_DETACH_SERVO 31
 #define SERIAL_SET_SERVO 32
 
 int header[2];
@@ -32,7 +35,7 @@ int mSpeedPin[128];
 int mDirectPin[10];
 //Servo array
 
-SoftwareServo mServo[2];
+Servo mServo[NUM_OF_SERVOS];
 
 void sendHeader(byte type, byte length){
   Serial.write(type);
@@ -42,12 +45,13 @@ void sendHeader(byte type, byte length){
 void setup(){
   delay(500);
   Serial.begin(9600);
-  mServo[0].attach(5);
-  mServo[1].attach(7);
+  for(int i=0; i<NUM_OF_SERVOS; i++){
+    mServo[i].attach(5);
+    mServo[i].detach();
+  }
 }
 void loop(){
   while(true){
-    SoftwareServo::refresh();
     if(Serial.available() == 2){
       header[0]=Serial.read();
       header[1]=Serial.read();
@@ -85,6 +89,13 @@ void loop(){
             analogWrite(mSpeedPin[body[0]], body[1]);
         break;
         //Servo motor
+        case SERIAL_ATTACH_SERVO:
+           mServo[body[0]-1].attach(body[1]);
+        break;
+        case SERIAL_DETACH_SERVO:
+           mServo[body[0]-1].detach();
+           //mServo[body[0]-1].write(90);
+        break;
         case SERIAL_SET_SERVO:
            mServo[body[0]-1].write(body[1]);
         break;
